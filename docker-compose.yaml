@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  api:
+    # 0. NOMBRE DE LA IMAGEN (opcional, si no agarra el nombre de la carpeta enla que este).
+    image: heroes-villanos-fastapi:latest
+    # 1. Le dice a Compose que construya la imagen usando el Dockerfile en este directorio.
+    build: . 
+    
+    # 2. Le asigna un nombre de contenedor legible.
+    container_name: api-heroes-villanos
+    
+    # 3. Mapeo de puertos (8000 de tu PC al 80 del contenedor).
+    ports:
+      - "8000:80"
+      
+    # 4. VOLUMEN: Monta la carpeta de tu PC (el .) en el /app del contenedor.
+    #    Esto permite que los cambios en main.py sean leídos instantáneamente.
+    volumes:
+      - .:/app
+      
+    # 5. COMANDO: Inicia Uvicorn con la opción --reload.
+    #    Al guardar main.py en tu PC, el servidor se reinicia automáticamente.
+    command: uvicorn main:app --host 0.0.0.0 --port 80 --reload
