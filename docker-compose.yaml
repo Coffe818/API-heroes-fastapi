@@ -22,3 +22,41 @@ services:
     # 5. COMANDO: Inicia Uvicorn con la opción --reload.
     #    Al guardar main.py en tu PC, el servidor se reinicia automáticamente.
     command: uvicorn main:app --host 0.0.0.0 --port 80 --reload
+    
+    # 6. VINCULAR CON LA BASE DE DATOS
+    depends_on:
+      db:
+        condition: service_healthy # <--- Espera a que el healthcheck pase
+      
+    # 7. ¡CRUCIAL! INYECTAR LA VARIABLE DE ENTORNO
+    environment:
+      # La URL de conexión al servicio 'db'
+      # postgresql://usuario:contraseña@nombre_del_servicio:puerto/nombre_db
+      - DATABASE_URL=postgresql://postgres_user:postgres_password@db:5432/heroes_db
+      
+  db:
+    # 8. SERVICIO DE BASE DE DATOS POSTGRESQL
+    image: postgres:14-alpine
+    container_name: heroes_db_container
+    restart: always # Asegura que la DB se reinicie si falla
+    
+    # 9. CREDENCIALES DE LA DB
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: heroes_db
+      
+    # 10. PERSISTENCIA DE DATOS: Montar un volumen para que los datos no se borren
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres_user -d heroes_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+      
+# 11. DEFINICIÓN DEL VOLUMEN PERSISTENTE
+volumes:
+  postgres_data:
