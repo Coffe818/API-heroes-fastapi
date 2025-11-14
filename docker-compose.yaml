@@ -33,7 +33,7 @@ services:
       # La URL de conexión al servicio 'db'
       # postgresql://usuario:contraseña@nombre_del_servicio:puerto/nombre_db
       - DATABASE_URL=postgresql://postgres_user:postgres_password@db:5432/heroes_db
-      
+      - API_CLAVE_SECRETA=clave-secreta-para-desarrollo-local-818
   db:
     # 8. SERVICIO DE BASE DE DATOS POSTGRESQL
     image: postgres:14-alpine
