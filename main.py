@@ -15,29 +15,19 @@ class Heroe(SQLModel, table=True):
     edad: Optional[int] = Field(default=None, index=True)
     nombre_secreto: str
     poder: Optional[str] = None
-class HeroeUpdate(SQLModel):
-    nombre: Optional[str] = None
-    edad: Optional[int] = None
-    nombre_secreto: Optional[str] = None
-    poder: Optional[str] = None
+
 class Equipo(SQLModel, table=True):
     id: Optional[int] = ID_FIELD
     nombre_equipo: str = Field(index=True)
     base_operaciones: str
     fundacion_anio: int
-class EquipoUpdate(SQLModel):
-    nombre_equipo: Optional[str] = None
-    base_operaciones: Optional[str] = None
-    fundacion_anio: Optional[int] = None
+
 class Villano(SQLModel, table=True):
     id: Optional[int] = ID_FIELD
     nombre_villano: str = Field(index=True)
     amenaza_nivel: int
     ultima_ubicacion: Optional[str] = None
-class VillanoUpdate(SQLModel):
-    nombre_villano: Optional[str] = None
-    amenaza_nivel: Optional[int] = None
-    ultima_ubicacion: Optional[str] = None
+
 
 # --- 2. CONFIGURACIÓN DE LA BASE DE DATOS Y CONEXIÓN DIFERIDA ---
 
@@ -130,16 +120,19 @@ def leer_heroe(heroe_id: int, sesion: SesionDep) -> Heroe:
     return heroe
 
 @app.patch("/heroes/{heroe_id}", response_model=Heroe)
-def actualizar_heroe(heroe_id: int, heroe: HeroeUpdate, sesion: SesionDep) -> Heroe:
+def actualizar_heroe(heroe_id: int, heroe: Heroe, sesion: SesionDep) -> Heroe:
     db_heroe = sesion.get(Heroe, heroe_id)
     if not db_heroe:
         raise HTTPException(status_code=404, detail="Héroe no encontrado")
 
     heroe_datos = heroe.model_dump(exclude_unset=True)
-    db_heroe.model_validate(db_heroe, update=heroe_datos)
+    for key, value in heroe_datos.items():
+        setattr(db_heroe, key, value)
+    # db_heroe.model_validate(db_heroe, update=heroe_datos)
 
     sesion.add(db_heroe)
     sesion.commit()
+    sesion.expire(db_heroe)
     sesion.refresh(db_heroe)
     return db_heroe
 
@@ -169,16 +162,18 @@ def leer_equipos(sesion: SesionDep) -> list[Equipo]:
     return equipos
 
 @app.patch("/equipos/{equipo_id}", response_model=Equipo)
-def actualizar_equipo(equipo_id: int, equipo: EquipoUpdate, sesion: SesionDep) -> Equipo:
+def actualizar_equipo(equipo_id: int, equipo: Equipo, sesion: SesionDep) -> Equipo:
     db_equipo = sesion.get(Equipo, equipo_id)
     if not db_equipo:
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
 
     equipo_datos = equipo.model_dump(exclude_unset=True)
-    db_equipo.model_validate(db_equipo, update=equipo_datos)
+    for key, value in equipo_datos.items():
+        setattr(db_equipo, key, value)
 
     sesion.add(db_equipo)
     sesion.commit()
+    sesion.expire(db_equipo)
     sesion.refresh(db_equipo)
     return db_equipo
 
@@ -207,16 +202,18 @@ def leer_villanos(sesion: SesionDep) -> list[Villano]:
     return villanos
 
 @app.patch("/villanos/{villano_id}", response_model=Villano)
-def actualizar_villano(villano_id: int, villano: VillanoUpdate, sesion: SesionDep) -> Villano:
+def actualizar_villano(villano_id: int, villano: Villano, sesion: SesionDep) -> Villano:
     db_villano = sesion.get(Villano, villano_id)
     if not db_villano:
         raise HTTPException(status_code=404, detail="Villano no encontrado")
 
     villano_datos = villano.model_dump(exclude_unset=True)
-    db_villano.model_validate(db_villano, update=villano_datos)
+    for key, value in villano_datos.items():
+        setattr(db_villano, key, value)
 
     sesion.add(db_villano)
     sesion.commit()
+    sesion.expire(db_villano)
     sesion.refresh(db_villano)
     return db_villano
 
