@@ -235,3 +235,9 @@ def eliminar_villano(villano_id: int, sesion: SesionDep):
     sesion.delete(villano)
     sesion.commit()
     return {"ok": True}
+
+
+# --- 7. Adjuntar Routers ---
+app.include_router(router_heroes)
+app.include_router(router_equipos)
+app.include_router(router_villanos)
