@@ -89,7 +89,12 @@ def al_iniciar():
     global motor_db
     
     # 🚨 FIX: La conexión se crea aquí, después de que la red de Docker esté lista.
-    motor_db = create_engine(DATABASE_URL) 
+    motor_db = create_engine(
+        DATABASE_URL,
+        connect_args={
+            "sslmode": "require"
+        }
+    )
     crear_db_y_tablas() # Crea todas las tablas en la nueva DB
 
 
