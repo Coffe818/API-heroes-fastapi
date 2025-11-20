@@ -38,7 +38,7 @@ print("DATABASE_URL:", DATABASE_URL)
 
 # 1. Validación de la URL: Si no está en el entorno (Render/Docker), fallamos inmediatamente.
 if not DATABASE_URL:
-    raise Exception("La variable de entorno DATABASE_URL no está configurada.")
+    raise Exception(f"La variable de entorno DATABASE_URL no está configurada. {DATABASE_URL}")
 
 # 2. Variable global para el motor (Inicialmente None, se llena en el startup)
 motor_db: Engine | None = None
