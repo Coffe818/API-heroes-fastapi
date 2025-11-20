@@ -34,6 +34,7 @@ class Villano(SQLModel, table=True):
 ## Variables de entorno
 DATABASE_URL = os.environ.get("DATABASE_URL")
 API_CLAVE_SECRETA = os.environ.get("API_CLAVE_SECRETA")
+print("DATABASE_URL:", DATABASE_URL)
 
 # 1. Validación de la URL: Si no está en el entorno (Render/Docker), fallamos inmediatamente.
 if not DATABASE_URL:
