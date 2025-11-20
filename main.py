@@ -1,6 +1,6 @@
 from typing import Annotated, Optional
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, APIRouter
 from fastapi.security.api_key import APIKeyHeader # Necesaria para la seguridad
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from sqlalchemy.engine.base import Engine  # Necesario Engine
