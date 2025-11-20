@@ -107,14 +107,14 @@ def estado_salud():
 # --- 4. Endpoints CRUD para Héroes (Heroe) ---
 # Todos requieren seguridad gracias a la configuración global
 
-@app.post("/heroes/", response_model=Heroe)
+@router_heroes.post("/heroes/", response_model=Heroe)
 def crear_heroe(heroe: Heroe, sesion: SesionDep) -> Heroe:
     sesion.add(heroe)
     sesion.commit()
     sesion.refresh(heroe)
     return heroe
 
-@app.get("/heroes/", response_model=list[Heroe])
+@router_heroes.get("/heroes/", response_model=list[Heroe])
 def leer_heroes(
     sesion: SesionDep,
     desplazamiento: int = 0,
@@ -123,14 +123,14 @@ def leer_heroes(
     heroes = sesion.exec(select(Heroe).offset(desplazamiento).limit(limite)).all()
     return heroes
 
-@app.get("/heroes/{heroe_id}", response_model=Heroe)
+@router_heroes.get("/heroes/{heroe_id}", response_model=Heroe)
 def leer_heroe(heroe_id: int, sesion: SesionDep) -> Heroe:
     heroe = sesion.get(Heroe, heroe_id)
     if not heroe:
         raise HTTPException(status_code=404, detail="Héroe no encontrado")
     return heroe
 
-@app.patch("/heroes/{heroe_id}", response_model=Heroe)
+@router_heroes.patch("/heroes/{heroe_id}", response_model=Heroe)
 def actualizar_heroe(heroe_id: int, heroe: Heroe, sesion: SesionDep) -> Heroe:
     db_heroe = sesion.get(Heroe, heroe_id)
     if not db_heroe:
@@ -147,7 +147,7 @@ def actualizar_heroe(heroe_id: int, heroe: Heroe, sesion: SesionDep) -> Heroe:
     sesion.refresh(db_heroe)
     return db_heroe
 
-@app.delete("/heroes/{heroe_id}")
+@router_heroes.delete("/heroes/{heroe_id}")
 def eliminar_heroe(heroe_id: int, sesion: SesionDep):
     heroe = sesion.get(Heroe, heroe_id)
     if not heroe:
@@ -160,19 +160,19 @@ def eliminar_heroe(heroe_id: int, sesion: SesionDep):
 # --- 5. Endpoints CRUD para Equipos (Equipo) ---
 # ... (Los demás endpoints siguen el mismo patrón limpio) ...
 
-@app.post("/equipos/", response_model=Equipo)
+@router_equipos.post("/equipos/", response_model=Equipo)
 def crear_equipo(equipo: Equipo, sesion: SesionDep) -> Equipo:
     sesion.add(equipo)
     sesion.commit()
     sesion.refresh(equipo)
     return equipo
 
-@app.get("/equipos/", response_model=list[Equipo])
+@router_equipos.get("/equipos/", response_model=list[Equipo])
 def leer_equipos(sesion: SesionDep) -> list[Equipo]:
     equipos = sesion.exec(select(Equipo)).all()
     return equipos
 
-@app.patch("/equipos/{equipo_id}", response_model=Equipo)
+@router_equipos.patch("/equipos/{equipo_id}", response_model=Equipo)
 def actualizar_equipo(equipo_id: int, equipo: Equipo, sesion: SesionDep) -> Equipo:
     db_equipo = sesion.get(Equipo, equipo_id)
     if not db_equipo:
@@ -188,7 +188,7 @@ def actualizar_equipo(equipo_id: int, equipo: Equipo, sesion: SesionDep) -> Equi
     sesion.refresh(db_equipo)
     return db_equipo
 
-@app.delete("/equipos/{equipo_id}")
+@router_equipos.delete("/equipos/{equipo_id}")
 def eliminar_equipo(equipo_id: int, sesion: SesionDep):
     equipo = sesion.get(Equipo, equipo_id)
     if not equipo:
@@ -200,19 +200,19 @@ def eliminar_equipo(equipo_id: int, sesion: SesionDep):
 
 # --- 6. Endpoints CRUD para Villanos (Villano) ---
 
-@app.post("/villanos/", response_model=Villano)
+@router_villanos.post("/villanos/", response_model=Villano)
 def crear_villano(villano: Villano, sesion: SesionDep) -> Villano:
     sesion.add(villano)
     sesion.commit()
     sesion.refresh(villano)
     return villano
 
-@app.get("/villanos/", response_model=list[Villano])
+@router_villanos.get("/villanos/", response_model=list[Villano])
 def leer_villanos(sesion: SesionDep) -> list[Villano]:
     villanos = sesion.exec(select(Villano)).all()
     return villanos
 
-@app.patch("/villanos/{villano_id}", response_model=Villano)
+@router_villanos.patch("/villanos/{villano_id}", response_model=Villano)
 def actualizar_villano(villano_id: int, villano: Villano, sesion: SesionDep) -> Villano:
     db_villano = sesion.get(Villano, villano_id)
     if not db_villano:
@@ -228,7 +228,7 @@ def actualizar_villano(villano_id: int, villano: Villano, sesion: SesionDep) -> 
     sesion.refresh(db_villano)
     return db_villano
 
-@app.delete("/villanos/{villano_id}")
+@router_villanos.delete("/villanos/{villano_id}")
 def eliminar_villano(villano_id: int, sesion: SesionDep):
     villano = sesion.get(Villano, villano_id)
     if not villano:
