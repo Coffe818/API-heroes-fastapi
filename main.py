@@ -82,6 +82,9 @@ app = FastAPI(
     dependencies=[DEPENDENCIA_GLOBAL_SEGURA] # <--- ¡APLICACIÓN GLOBAL DE SEGURIDAD!
 )
 
+router_heroes = APIRouter(prefix="/heroes", tags=["Heroe"])
+router_equipos = APIRouter(prefix="/equipos", tags=["Equipo"])
+router_villanos = APIRouter(prefix="/villanos", tags=["Villano"])
 
 @app.on_event("startup")
 def al_iniciar():
@@ -97,7 +100,9 @@ def al_iniciar():
     )
     crear_db_y_tablas() # Crea todas las tablas en la nueva DB
 
-
+@app.get("/", tags=["Diagnostico"])
+def estado_salud():
+    return {"status": "OK", "mensaje": "🦸‍♀️ API de Héroes, Equipos y Villanos funcionando correctamente."}
 # --- 4. Endpoints CRUD para Héroes (Heroe) ---
 # Todos requieren seguridad gracias a la configuración global
 
